@@ -2,6 +2,18 @@
 
 Este documento detalla los cambios, mejoras y correcciones realizadas en el script de mantenimiento `ToolKit_Pro.bat`.
 
+## [v1.4.0] - 2026-02-09
+### Agregado
+- **Gestión de Aplicaciones:** Se añadieron opciones específicas para reiniciar aplicaciones comunes de oficina:
+  - **Microsoft Teams:** Detecta y cierra tanto la versión "New Teams" (trabajo) como la "Classic Teams".
+  - **Google Chrome:** Fuerza el cierre de todos los procesos/pestañas y lo reabre.
+  - **Adobe Acrobat:** Soporte para cerrar Acrobat Pro/DC y Adobe Reader.
+
+### Cambios
+- **Interfaz de Usuario:** Reorganización completa del Menú Principal.
+  - **Grupo 1 (Ops. 1-4):** Herramientas de Aplicaciones (Prioridad alta para soporte rápido).
+  - **Grupo 2 (Ops. 5-9):** Herramientas de Sistema y Diagnóstico.
+
 ## [v1.3.0] - 2026-02-09
 ### Agregado
 - **Reparación de Audio:** Nueva opción (6) específica para HP EliteBook G10 / Drivers Realtek.
