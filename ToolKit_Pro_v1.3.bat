@@ -2,11 +2,14 @@
 setlocal enabledelayedexpansion
 :: ---------------------------------------------------------
 :: NOMBRE:      Panel de Herramientas Pro
-:: VERSION:     1.3.0
+:: VERSION:     1.3.1 (Fix Limpieza)
 :: AUTOR:       %USERNAME%
 :: FECHA:       09/02/2026
 :: ---------------------------------------------------------
-title Panel de Herramientas Pro v1.3.0 - %USERNAME%
+title Panel de Herramientas Pro v1.3.1 - %USERNAME%
+
+:: Asegurarnos de no estar en una carpeta temporal para evitar errores
+cd /d "%USERPROFILE%"
 
 :: Definir codigos de colores ANSI
 set "esc="
@@ -22,7 +25,7 @@ if %errorLevel% == 0 ( set "admin=SI" ) else ( set "admin=NO" )
 :menu
 cls
 echo %G%======================================================
-echo           PANEL DE CONTROL v1.3.0
+echo           PANEL DE CONTROL v1.3.1
 echo ======================================================
 echo  1. Reiniciar Outlook (Cerrar y Abrir)
 echo  2. Ver Estado de Bateria (Salud y Porcentaje)
@@ -97,20 +100,29 @@ cls
 echo %G%--- INICIANDO LIMPIEZA ---%W%
 echo %Y%(Nota: Los archivos en uso no se pueden borrar)%W%
 echo.
-echo [>] Limpiando Temp de Usuario...
+
+:: 1. Limpieza de Usuario (Siempre se ejecuta)
+echo %G%[>] Limpiando Temp de Usuario...%W%
 del /q /s /f "%temp%\*" >nul 2>&1
 for /d %%x in ("%temp%\*") do rd /s /q "%%x" >nul 2>&1
 
-if %admin%==SI (
-    echo [>] Limpiando Temp de Windows...
-    del /q /s /f "C:\Windows\Temp\*" >nul 2>&1
-    for /d %%x in ("C:\Windows\Temp\*") do rd /s /q "%%x" >nul 2>&1
-    echo [>] Limpiando Prefetch...
-    del /q /s /f "C:\Windows\Prefetch\*" >nul 2>&1
-    echo %G%[OK] Limpieza de sistema completada.%W%
-) else (
-    echo %R%[!] Saltando carpetas de sistema (Requiere Admin).%W%
-)
+:: 2. Verificamos Admin para limpieza profunda
+if %admin%==NO goto skip_sys_clean
+
+:: Si es Admin, continuamos aqui:
+echo %G%[>] Limpiando Temp de Windows...%W%
+del /q /s /f "C:\Windows\Temp\*" >nul 2>&1
+for /d %%x in ("C:\Windows\Temp\*") do rd /s /q "%%x" >nul 2>&1
+
+echo %G%[>] Limpiando Prefetch...%W%
+del /q /s /f "C:\Windows\Prefetch\*" >nul 2>&1
+echo %G%[OK] Limpieza de sistema completada.%W%
+goto fin_limpieza
+
+:skip_sys_clean
+echo %R%[!] Saltando carpetas de sistema (Requiere Admin).%W%
+
+:fin_limpieza
 echo.
 pause
 goto menu
