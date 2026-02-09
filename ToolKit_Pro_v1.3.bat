@@ -2,13 +2,13 @@
 setlocal enabledelayedexpansion
 :: ---------------------------------------------------------
 :: NOMBRE:      Panel de Herramientas Pro
-:: VERSION:     1.3.1 (Fix Limpieza)
+:: VERSION:     1.4.0 (Apps Update)
 :: AUTOR:       %USERNAME%
 :: FECHA:       09/02/2026
 :: ---------------------------------------------------------
-title Panel de Herramientas Pro v1.3.1 - %USERNAME%
+title Panel de Herramientas Pro v1.4.0 - %USERNAME%
 
-:: Asegurarnos de no estar en una carpeta temporal para evitar errores
+:: Asegurarnos de no estar en una carpeta temporal
 cd /d "%USERPROFILE%"
 
 :: Definir codigos de colores ANSI
@@ -25,15 +25,21 @@ if %errorLevel% == 0 ( set "admin=SI" ) else ( set "admin=NO" )
 :menu
 cls
 echo %G%======================================================
-echo           PANEL DE CONTROL v1.3.1
+echo           PANEL DE CONTROL v1.4.0
 echo ======================================================
-echo  1. Reiniciar Outlook (Cerrar y Abrir)
-echo  2. Ver Estado de Bateria (Salud y Porcentaje)
-echo  3. Ver Informacion del Computador (Hardware)
-echo  4. Generar Informe de Bateria HTML (Escritorio)
-echo  5. Limpiar Temporales (Limpieza Profunda)
-echo  6. Reparar Audio (HP EliteBook/Realtek)
-echo  7. Salir
+echo   -- REINICIAR APLICACIONES --
+echo  1. Outlook
+echo  2. Microsoft Teams (New/Classic)
+echo  3. Google Chrome
+echo  4. Adobe Acrobat / Reader
+echo.
+echo   -- SISTEMA Y DIAGNOSTICO --
+echo  5. Ver Estado de Bateria
+echo  6. Ver Informacion Hardware
+echo  7. Generar Informe Bateria HTML
+echo  8. Limpieza Temporales
+echo  9. Reparar Audio (HP EliteBook)
+echo  0. Salir
 echo ======================================================%W%
 
 if %admin%==NO (
@@ -42,16 +48,23 @@ if %admin%==NO (
     echo %G%[OK] Modo Administrador detectado.%W%
 )
 echo %G%======================================================%W%
-set /p opt="Seleccione una opcion (1-7): "
+set /p opt="Seleccione una opcion (0-9): "
 
 if "%opt%"=="1" goto outlook
-if "%opt%"=="2" goto bateria
-if "%opt%"=="3" goto hardware
-if "%opt%"=="4" goto informe
-if "%opt%"=="5" goto limpieza
-if "%opt%"=="6" goto fixaudio
-if "%opt%"=="7" exit
+if "%opt%"=="2" goto teams
+if "%opt%"=="3" goto chrome
+if "%opt%"=="4" goto acrobat
+if "%opt%"=="5" goto bateria
+if "%opt%"=="6" goto hardware
+if "%opt%"=="7" goto informe
+if "%opt%"=="8" goto limpieza
+if "%opt%"=="9" goto fixaudio
+if "%opt%"=="0" exit
 goto menu
+
+:: ---------------------------------------------------------
+:: SECCION DE APLICACIONES
+:: ---------------------------------------------------------
 
 :outlook
 cls
@@ -60,8 +73,48 @@ taskkill /F /IM outlook.exe /T >nul 2>&1
 timeout /t 2 >nul
 echo %G%[>] Iniciando Outlook...%W%
 start outlook:
-pause
 goto menu
+
+:teams
+cls
+echo %G%[>] Cerrando Microsoft Teams...%W%
+:: Intenta cerrar tanto el Teams nuevo (ms-teams.exe) como el clasico (Teams.exe)
+taskkill /F /IM ms-teams.exe /T >nul 2>&1
+taskkill /F /IM Teams.exe /T >nul 2>&1
+timeout /t 2 >nul
+echo %G%[>] Iniciando Teams...%W%
+:: Usamos el protocolo msteams: que abre la version correcta instalada
+start msteams:
+goto menu
+
+:chrome
+cls
+echo %G%[>] Cerrando Google Chrome...%W%
+taskkill /F /IM chrome.exe /T >nul 2>&1
+timeout /t 2 >nul
+echo %G%[>] Iniciando Chrome...%W%
+start chrome
+goto menu
+
+:acrobat
+cls
+echo %G%[>] Cerrando Adobe Acrobat/Reader...%W%
+:: Cierra Acrobat Pro/DC y versiones viejas de Reader
+taskkill /F /IM Acrobat.exe /T >nul 2>&1
+taskkill /F /IM AcroRd32.exe /T >nul 2>&1
+timeout /t 2 >nul
+echo %G%[>] Iniciando Acrobat...%W%
+:: Intenta abrir el ejecutable por defecto
+start acrobat
+if %errorLevel% neq 0 (
+    echo %Y%[INFO] No se pudo iniciar automaticamente. Abrelo manualmente.%W%
+    pause
+)
+goto menu
+
+:: ---------------------------------------------------------
+:: SECCION DE SISTEMA
+:: ---------------------------------------------------------
 
 :bateria
 cls
@@ -101,15 +154,12 @@ echo %G%--- INICIANDO LIMPIEZA ---%W%
 echo %Y%(Nota: Los archivos en uso no se pueden borrar)%W%
 echo.
 
-:: 1. Limpieza de Usuario (Siempre se ejecuta)
 echo %G%[>] Limpiando Temp de Usuario...%W%
 del /q /s /f "%temp%\*" >nul 2>&1
 for /d %%x in ("%temp%\*") do rd /s /q "%%x" >nul 2>&1
 
-:: 2. Verificamos Admin para limpieza profunda
 if %admin%==NO goto skip_sys_clean
 
-:: Si es Admin, continuamos aqui:
 echo %G%[>] Limpiando Temp de Windows...%W%
 del /q /s /f "C:\Windows\Temp\*" >nul 2>&1
 for /d %%x in ("C:\Windows\Temp\*") do rd /s /q "%%x" >nul 2>&1
