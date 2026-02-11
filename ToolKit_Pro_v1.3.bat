@@ -2,11 +2,11 @@
 setlocal enabledelayedexpansion
 :: ---------------------------------------------------------
 :: NOMBRE:      Panel de Herramientas Pro
-:: VERSION:     1.4.0 (Apps Update)
+:: VERSION:     1.5.0 (Office Suite Update)
 :: AUTOR:       %USERNAME%
 :: FECHA:       09/02/2026
 :: ---------------------------------------------------------
-title Panel de Herramientas Pro v1.4.0 - %USERNAME%
+title Panel de Herramientas Pro v1.5.0 - %USERNAME%
 
 :: Asegurarnos de no estar en una carpeta temporal
 cd /d "%USERPROFILE%"
@@ -25,20 +25,22 @@ if %errorLevel% == 0 ( set "admin=SI" ) else ( set "admin=NO" )
 :menu
 cls
 echo %G%======================================================
-echo           PANEL DE CONTROL v1.4.0
+echo           PANEL DE CONTROL v1.5.0
 echo ======================================================
-echo   -- REINICIAR APLICACIONES --
+echo   -- REINICIAR OFIMATICA --
 echo  1. Outlook
-echo  2. Microsoft Teams (New/Classic)
-echo  3. Google Chrome
-echo  4. Adobe Acrobat / Reader
+echo  2. Microsoft Word
+echo  3. Microsoft Excel
+echo  4. Microsoft Teams (New/Classic)
+echo  5. Adobe Acrobat / Reader
+echo  6. Google Chrome
 echo.
 echo   -- SISTEMA Y DIAGNOSTICO --
-echo  5. Ver Estado de Bateria
-echo  6. Ver Informacion Hardware
-echo  7. Generar Informe Bateria HTML
-echo  8. Limpieza Temporales
-echo  9. Reparar Audio (HP EliteBook)
+echo  7. Ver Estado de Bateria
+echo  8. Ver Informacion Hardware
+echo  9. Generar Informe Bateria HTML
+echo  10. Limpieza Temporales
+echo  11. Reparar Audio (HP EliteBook)
 echo  0. Salir
 echo ======================================================%W%
 
@@ -48,17 +50,22 @@ if %admin%==NO (
     echo %G%[OK] Modo Administrador detectado.%W%
 )
 echo %G%======================================================%W%
-set /p opt="Seleccione una opcion (0-9): "
+set /p opt="Seleccione una opcion (0-11): "
 
+:: Opciones de Aplicaciones
 if "%opt%"=="1" goto outlook
-if "%opt%"=="2" goto teams
-if "%opt%"=="3" goto chrome
-if "%opt%"=="4" goto acrobat
-if "%opt%"=="5" goto bateria
-if "%opt%"=="6" goto hardware
-if "%opt%"=="7" goto informe
-if "%opt%"=="8" goto limpieza
-if "%opt%"=="9" goto fixaudio
+if "%opt%"=="2" goto word
+if "%opt%"=="3" goto excel
+if "%opt%"=="4" goto teams
+if "%opt%"=="5" goto acrobat
+if "%opt%"=="6" goto chrome
+
+:: Opciones de Sistema
+if "%opt%"=="7" goto bateria
+if "%opt%"=="8" goto hardware
+if "%opt%"=="9" goto informe
+if "%opt%"=="10" goto limpieza
+if "%opt%"=="11" goto fixaudio
 if "%opt%"=="0" exit
 goto menu
 
@@ -75,15 +82,31 @@ echo %G%[>] Iniciando Outlook...%W%
 start outlook:
 goto menu
 
+:word
+cls
+echo %G%[>] Cerrando Word...%W%
+taskkill /F /IM winword.exe /T >nul 2>&1
+timeout /t 2 >nul
+echo %G%[>] Iniciando Word...%W%
+start winword
+goto menu
+
+:excel
+cls
+echo %G%[>] Cerrando Excel...%W%
+taskkill /F /IM excel.exe /T >nul 2>&1
+timeout /t 2 >nul
+echo %G%[>] Iniciando Excel...%W%
+start excel
+goto menu
+
 :teams
 cls
 echo %G%[>] Cerrando Microsoft Teams...%W%
-:: Intenta cerrar tanto el Teams nuevo (ms-teams.exe) como el clasico (Teams.exe)
 taskkill /F /IM ms-teams.exe /T >nul 2>&1
 taskkill /F /IM Teams.exe /T >nul 2>&1
 timeout /t 2 >nul
 echo %G%[>] Iniciando Teams...%W%
-:: Usamos el protocolo msteams: que abre la version correcta instalada
 start msteams:
 goto menu
 
@@ -99,12 +122,10 @@ goto menu
 :acrobat
 cls
 echo %G%[>] Cerrando Adobe Acrobat/Reader...%W%
-:: Cierra Acrobat Pro/DC y versiones viejas de Reader
 taskkill /F /IM Acrobat.exe /T >nul 2>&1
 taskkill /F /IM AcroRd32.exe /T >nul 2>&1
 timeout /t 2 >nul
 echo %G%[>] Iniciando Acrobat...%W%
-:: Intenta abrir el ejecutable por defecto
 start acrobat
 if %errorLevel% neq 0 (
     echo %Y%[INFO] No se pudo iniciar automaticamente. Abrelo manualmente.%W%
