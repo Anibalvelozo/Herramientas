@@ -1,3 +1,8 @@
+## [v1.5.0] - 2026-02-09
+### Agregado
+- **Suite Office Completa:** Se añadieron opciones para reiniciar Microsoft Word (`winword.exe`) y Microsoft Excel (`excel.exe`).
+- **Navegación:** Se expandió el menú principal a 11 opciones para acomodar las nuevas herramientas.
+  
 # Panel de Herramientas Pro - Historial de Versiones
 
 Este documento detalla los cambios, mejoras y correcciones realizadas en el script de mantenimiento `ToolKit_Pro.bat`.
