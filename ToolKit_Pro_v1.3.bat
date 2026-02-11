@@ -2,11 +2,11 @@
 setlocal enabledelayedexpansion
 :: ---------------------------------------------------------
 :: NOMBRE:      Panel de Herramientas Pro
-:: VERSION:     1.5.0 (Office Suite Update)
+:: VERSION:     1.5.3 (Generic Release)
 :: AUTOR:       %USERNAME%
-:: FECHA:       09/02/2026
+:: FECHA:       11/02/2026
 :: ---------------------------------------------------------
-title Panel de Herramientas Pro v1.5.0 - %USERNAME%
+title Panel de Herramientas Pro v1.5.3 - %USERNAME%
 
 :: Asegurarnos de no estar en una carpeta temporal
 cd /d "%USERPROFILE%"
@@ -14,6 +14,7 @@ cd /d "%USERPROFILE%"
 :: Definir codigos de colores ANSI
 set "esc="
 set "G=%esc%[92m"  :: Verde (Exito/Menu)
+set "C=%esc%[96m"  :: Cyan (Dato Resaltado)
 set "Y=%esc%[93m"  :: Amarillo (Advertencia/Proceso)
 set "R=%esc%[91m"  :: Rojo (Error)
 set "W=%esc%[0m"   :: Blanco/Reset
@@ -25,7 +26,7 @@ if %errorLevel% == 0 ( set "admin=SI" ) else ( set "admin=NO" )
 :menu
 cls
 echo %G%======================================================
-echo           PANEL DE CONTROL v1.5.0
+echo           PANEL DE CONTROL v1.5.3
 echo ======================================================
 echo   -- REINICIAR OFIMATICA --
 echo  1. Outlook
@@ -37,7 +38,7 @@ echo  6. Google Chrome
 echo.
 echo   -- SISTEMA Y DIAGNOSTICO --
 echo  7. Ver Estado de Bateria
-echo  8. Ver Informacion Hardware
+echo  8. Ver Informacion Hardware y Red (IP)
 echo  9. Generar Informe Bateria HTML
 echo  10. Limpieza Temporales
 echo  11. Reparar Audio (HP EliteBook)
@@ -152,6 +153,9 @@ powershell -Command "Write-Host 'CPU: ' (Get-CimInstance Win32_Processor).Name"
 powershell -Command "Write-Host 'RAM: ' ([math]::round((Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property Capacity -Sum).Sum / 1GB, 2)) 'GB'"
 powershell -Command "Write-Host 'GPU: ' (Get-CimInstance Win32_VideoController).Name"
 for /f "tokens=2 delims==" %%a in ('wmic bios get serialnumber /value') do echo S/N: %%a
+echo.
+echo %G%--- RED (IP v4) ---%W%
+powershell -Command "Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -notmatch 'Loopback|vEthernet' -and $_.ConnectionState -eq 'Connected' } | ForEach-Object { Write-Host ($_.InterfaceAlias + ': ') -NoNewline; Write-Host $_.IPAddress -ForegroundColor Cyan }"
 echo.
 pause
 goto menu
